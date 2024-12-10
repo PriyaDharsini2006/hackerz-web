@@ -11,21 +11,18 @@
 //     const videoElement = videoRef.current;
 
 //     if (videoElement) {
-//       // Remove muted attribute to allow sound
-//       videoElement.muted = false;
-
-//       const handleEnded = () => {
-//         router.push('/hi');
-//       };
-
-//       // Try to play with sound
-//       const playVideoWithSound = async () => {
+//       // Attempt to play with sound
+//       const playVideo = async () => {
 //         try {
+//           // Explicitly set to play with sound
+//           videoElement.muted = false;
 //           await videoElement.play();
 //         } catch (error) {
 //           console.error('Autoplay with sound failed:', error);
-//           // Fallback: try muted autoplay
+          
+//           // Fallback strategies
 //           try {
+//             // Try muted autoplay as last resort
 //             videoElement.muted = true;
 //             await videoElement.play();
 //           } catch (mutedError) {
@@ -34,13 +31,19 @@
 //         }
 //       };
 
+//       // Navigate when video ends
+//       const handleEnded = () => {
+//         router.push('/hi');
+//       };
+
 //       videoElement.addEventListener('ended', handleEnded);
-//       playVideoWithSound();
+      
+//       // Attempt immediate autoplay
+//       playVideo();
 
 //       // Cleanup
 //       return () => {
 //         videoElement.removeEventListener('ended', handleEnded);
-//         videoElement.pause();
 //       };
 //     }
 //   }, [router]);
@@ -64,24 +67,28 @@
 // }
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function MediaPlayer() {
   const videoRef = useRef(null);
   const router = useRouter();
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     const videoElement = videoRef.current;
 
     if (videoElement) {
-      // Function to attempt playing with sound
-      const tryPlayWithSound = async () => {
+      // Comprehensive play with sound strategy
+      const playVideoWithSound = async () => {
         try {
-          // First, try playing with sound
+          // Unmute explicitly
           videoElement.muted = false;
+          
+          // Try to play with sound
           await videoElement.play();
+          
+          // Additional volume check
+          videoElement.volume = 1.0;
         } catch (error) {
           console.log('Autoplay with sound failed:', error);
           
@@ -90,44 +97,41 @@ export default function MediaPlayer() {
             videoElement.muted = true;
             await videoElement.play();
           } catch (mutedError) {
-            console.log('Muted autoplay failed:', mutedError);
+            console.error('Muted autoplay failed:', mutedError);
           }
         }
       };
 
-      // Event handler for video end
+      // Navigation when video ends
       const handleEnded = () => {
         router.push('/hi');
       };
 
-      // Add event listeners
-      videoElement.addEventListener('ended', handleEnded);
-
-      // Global interaction listener to help with autoplay
+      // Add global event listeners to help with autoplay
       const handleUserInteraction = () => {
-        if (!hasInteracted) {
-          setHasInteracted(true);
-          tryPlayWithSound();
-          // Remove the global listener after first interaction
-          document.removeEventListener('click', handleUserInteraction);
-        }
+        playVideoWithSound();
+        // Remove listener after first interaction
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
       };
 
-      // If no interaction has occurred, add global listener
-      if (!hasInteracted) {
-        document.addEventListener('click', handleUserInteraction);
-      }
+      // Multiple event listeners for different interaction types
+      document.addEventListener('click', handleUserInteraction);
+      document.addEventListener('touchstart', handleUserInteraction);
 
-      // Initial attempt to play
-      tryPlayWithSound();
+      videoElement.addEventListener('ended', handleEnded);
+      
+      // Immediate play attempt
+      playVideoWithSound();
 
-      // Cleanup function
+      // Cleanup
       return () => {
         document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
         videoElement.removeEventListener('ended', handleEnded);
       };
     }
-  }, [router, hasInteracted]);
+  }, [router]);
 
   return (
     <video
