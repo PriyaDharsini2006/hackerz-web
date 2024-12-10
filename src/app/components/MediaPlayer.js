@@ -6,6 +6,13 @@ export default function MediaPlayer() {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [videoSource, setVideoSource] = useState('');
+
+  useEffect(() => {
+    // Determine video source based on device type
+    const isMobileDevice = window.innerWidth <= 768; // Typical mobile/tablet breakpoint
+    setVideoSource(isMobileDevice ? '/video1.mp4' : '/video.mp4');
+  }, []);
 
   const handlePlayVideo = async () => {
     const videoElement = videoRef.current;
@@ -65,20 +72,22 @@ export default function MediaPlayer() {
         overflow: 'hidden'
       }}
     > 
-      <video
-        ref={videoRef}
-        src="/video1.mp4"
-        playsInline
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%', 
-          height: '100%',
-          objectFit: 'cover',
-          display: isPlaying ? 'block' : 'none'
-        }}
-      />
+      {videoSource && (
+        <video
+          ref={videoRef}
+          src={videoSource}
+          playsInline
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%', 
+            height: '100%',
+            objectFit: 'cover',
+            display: isPlaying ? 'block' : 'none'
+          }}
+        />
+      )}
     
       {!isPlaying && (
         <div 
@@ -107,7 +116,7 @@ export default function MediaPlayer() {
                 padding: '15px 40px',
                 fontSize: '20px',
                 fontWeight: 'bold',
-                color: '# ffff',
+                color: '#ffffff',
                 background: 'rgba(0,0,0,0.8)',
                 border: '2px solid #00ffff',
                 borderRadius: '5px', 
