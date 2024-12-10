@@ -106,24 +106,58 @@ export default function MediaPlayer() {
     const videoElement = videoRef.current;
     
     if (videoElement) {
-      try {
-        // Unmute and set volume
-        videoElement.muted = false;
-        videoElement.volume = 1.0;
-        
-        // Play video
-        await videoElement.play();
-        
-        // Update state
-        setIsPlaying(true);
+      // Comprehensive play with sound strategy
+      const playVideoWithSound = async () => {
+        try {
+          // Unmute explicitly
+          videoElement.muted = false;
+          
+          // Try to play with sound
+          await videoElement.play();
+          
+          // Additional volume check
+          videoElement.volume = 1.0;
+        } catch (error) {
+          console.log('Autoplay with sound failed:', error);
+          
+          // Fallback: try muted autoplay
+          try {
+            videoElement.muted = true;
+            await videoElement.play();
+          } catch (mutedError) {
+            console.error('Muted autoplay failed:', mutedError);
+          }
+        }
+      };
 
-        // Set up end of video navigation
-        videoElement.addEventListener('ended', () => {
-          router.push('/hi');
-        });
-      } catch (error) {
-        console.error('Video playback failed:', error);
-      }
+      // Navigation when video ends
+      const handleEnded = () => {
+        router.push('/hi');
+      };
+
+      // Add global event listeners to help with autoplay
+      const handleUserInteraction = () => {
+        playVideoWithSound();
+        // Remove listener after first interaction
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
+      };
+
+      // Multiple event listeners for different interaction types
+      document.addEventListener('click', handleUserInteraction);
+      document.addEventListener('touchstart', handleUserInteraction);
+
+      videoElement.addEventListener('ended', handleEnded);
+      
+      // Immediate play attempt
+      playVideoWithSound();
+
+      // Cleanup
+      return () => {
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
+        videoElement.removeEventListener('ended', handleEnded);
+      };
     }
   };
 
