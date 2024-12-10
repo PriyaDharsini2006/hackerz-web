@@ -178,11 +178,23 @@ export default function MediaPlayer() {
   }, []);
 
   return (
-    <div style={{ 
-      position: 'relative', 
-      width: '100%', 
-      height: '100vh' 
-    }}>
+    // <div style={{ 
+    //   position: 'relative', 
+    //   width: '100%', 
+    //   height: '100vh' 
+    // }}>
+    <div
+    style={{
+      position: 'absolute',
+      width: '100%',
+      height: '100vh',
+      backgroundImage: !isPlaying ? 'url(/hack2.jpg)' : 'none', 
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor: 'black'
+    }}> 
+
       <video
         ref={videoRef}
         src="/video.mp4"
@@ -194,29 +206,44 @@ export default function MediaPlayer() {
           width: '100%', 
           height: '100%',
           objectFit: 'cover',
-          backgroundColor: 'black'
+          // backgroundColor: 'black',
+          display: isPlaying ? 'block' : 'none'
         }}
       />
+    
       
       {!isPlaying && (
         <button 
           onClick={handlePlayVideo}
           style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            padding: '10px 20px',
-            fontSize: '16px',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
+            position:'absolute',
+            top:'50%',
+            left:"50%",
+            transform:"translate(-50%,-50%)",
+            padding: '15px 40px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            color: '#fff',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+            border: '2px solid #00d4ff',
+            borderRadius: '30px', 
             cursor: 'pointer',
-            zIndex: 10
+            boxShadow: '0 0 15px rgba(0, 212, 255, 0.6)',
+            transition: 'transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease',
+            zIndex:10
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = 'rgba(0, 212, 255, 0.9)'; 
+            e.target.style.boxShadow = '0 0 25px rgba(0, 212, 255, 1)'; 
+            e.target.style.transform = 'scale(1.1)'; 
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            e.target.style.boxShadow = '0 0 15px rgba(0, 212, 255, 0.6)';
+            e.target.style.transform = 'scale(1)'; 
           }}
         >
-          Play Video
+          Launch
         </button>
       )}
     </div>
