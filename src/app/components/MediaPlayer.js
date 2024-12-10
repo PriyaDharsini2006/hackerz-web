@@ -79,13 +79,12 @@ export default function MediaPlayer() {
       // Function to attempt playing with sound
       const tryPlayWithSound = async () => {
         try {
-          // First, try playing with sound
-          videoElement.muted = false;
+          videoElement.muted = false;  // Explicitly unmute
           await videoElement.play();
         } catch (error) {
           console.error('Autoplay with sound failed:', error);
           
-          // Fallback: try muted autoplay
+          // Fallback to muted if sound play fails
           try {
             videoElement.muted = true;
             await videoElement.play();
