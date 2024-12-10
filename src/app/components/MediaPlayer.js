@@ -1,61 +1,64 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function MediaPlayer() {
+  const videoRef = useRef(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Create video element client-side
-    const videoElement = document.createElement('video');
-    
-    // IMPORTANT: Rename your video file to remove special characters and spaces
-    videoElement.src = '/video.mp4';
-    
-    videoElement.style.position = 'fixed';
-    videoElement.style.top = '0';
-    videoElement.style.left = '0';
-    videoElement.style.width = '100%';
-    videoElement.style.height = '100%';
-    videoElement.style.objectFit = 'cover';
-    videoElement.style.backgroundColor = 'black';
-    videoElement.muted = true;
-    videoElement.playsInline = true;
+    const videoElement = videoRef.current;
 
-    // Add event listeners
-    const handleEnded = () => {
-      router.push('/hi');
-    };
-    videoElement.addEventListener('ended', handleEnded);
+    if (videoElement) {
+      // Remove muted attribute to allow sound
+      videoElement.muted = false;
 
-    // Improved error handling
-    videoElement.addEventListener('error', (e) => {
-      console.error('Video error:', e);
-      alert('Could not load video. Please check the file.');
-    });
+      const handleEnded = () => {
+        router.push('/hi');
+      };
 
-    // Try to play
-    const playVideo = async () => {
-      try {
-        await videoElement.play();
-      } catch (error) {
-        console.error('Error playing video:', error);
-        alert('Could not play video. Please check the file.');
-      }
-    };
+      // Try to play with sound
+      const playVideoWithSound = async () => {
+        try {
+          await videoElement.play();
+        } catch (error) {
+          console.error('Autoplay with sound failed:', error);
+          // Fallback: try muted autoplay
+          try {
+            videoElement.muted = true;
+            await videoElement.play();
+          } catch (mutedError) {
+            console.error('Even muted autoplay failed:', mutedError);
+          }
+        }
+      };
 
-    // Append to document body
-    document.body.appendChild(videoElement);
-    playVideo();
+      videoElement.addEventListener('ended', handleEnded);
+      playVideoWithSound();
 
-    // Cleanup
-    return () => {
-      videoElement.removeEventListener('ended', handleEnded);
-      videoElement.pause();
-      document.body.removeChild(videoElement);
-    };
+      // Cleanup
+      return () => {
+        videoElement.removeEventListener('ended', handleEnded);
+        videoElement.pause();
+      };
+    }
   }, [router]);
 
-  return null;
+  return (
+    <video
+      ref={videoRef}
+      src="/video.mp4"
+      playsInline
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%', 
+        height: '100%',
+        objectFit: 'cover',
+        backgroundColor: 'black'
+      }}
+    />
+  );
 }
