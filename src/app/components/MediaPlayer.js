@@ -136,7 +136,7 @@ export default function MediaPlayer() {
   return (
     <video
       ref={videoRef}
-      src="/video.mp4"
+      src="/video1.mp4"
       playsInline
       style={{
         position: 'fixed',
