@@ -1,3 +1,4 @@
+
 // 'use client';
 
 // import React, { useRef, useEffect } from 'react';
@@ -11,38 +12,64 @@
 //     const videoElement = videoRef.current;
 
 //     if (videoElement) {
-//       // Attempt to play with sound
-//       const playVideo = async () => {
+//       // Comprehensive play with sound strategy
+//       const playVideoWithSound = async () => {
 //         try {
-//           // Explicitly set to play with sound
+//           // Unmute explicitly
 //           videoElement.muted = false;
+          
+//           // Try to play with sound
 //           await videoElement.play();
+          
+//           // Additional volume check
+//           videoElement.volume = 1.0;
 //         } catch (error) {
 //           console.error('Autoplay with sound failed:', error);
           
-//           // Fallback strategies
+//           // Aggressive fallback strategies
 //           try {
-//             // Try muted autoplay as last resort
-//             videoElement.muted = true;
-//             await videoElement.play();
-//           } catch (mutedError) {
-//             console.error('Even muted autoplay failed:', mutedError);
+//             // Try user gesture-based play
+//             const playPromise = videoElement.play();
+//             if (playPromise !== undefined) {
+//               playPromise.then(() => {
+//                 videoElement.muted = false;
+//                 videoElement.volume = 1.0;
+//               }).catch(e => {
+//                 console.error('Play promise failed:', e);
+//               });
+//             }
+//           } catch (fallbackError) {
+//             console.error('All play attempts failed:', fallbackError);
 //           }
 //         }
 //       };
 
-//       // Navigate when video ends
+//       // Navigation when video ends
 //       const handleEnded = () => {
 //         router.push('/hi');
 //       };
 
+//       // Add global event listeners to help with autoplay
+//       const handleUserInteraction = () => {
+//         playVideoWithSound();
+//         // Remove listener after first interaction
+//         document.removeEventListener('click', handleUserInteraction);
+//         document.removeEventListener('touchstart', handleUserInteraction);
+//       };
+
+//       // Multiple event listeners for different interaction types
+//       document.addEventListener('click', handleUserInteraction);
+//       document.addEventListener('touchstart', handleUserInteraction);
+
 //       videoElement.addEventListener('ended', handleEnded);
       
-//       // Attempt immediate autoplay
-//       playVideo();
+//       // Immediate play attempt
+//       playVideoWithSound();
 
 //       // Cleanup
 //       return () => {
+//         document.removeEventListener('click', handleUserInteraction);
+//         document.removeEventListener('touchstart', handleUserInteraction);
 //         videoElement.removeEventListener('ended', handleEnded);
 //       };
 //     }
@@ -67,94 +94,81 @@
 // }
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function MediaPlayer() {
   const videoRef = useRef(null);
   const router = useRouter();
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  useEffect(() => {
+  const handlePlayVideo = async () => {
     const videoElement = videoRef.current;
-
+    
     if (videoElement) {
-      // Comprehensive play with sound strategy
-      const playVideoWithSound = async () => {
-        try {
-          // Unmute explicitly
-          videoElement.muted = false;
-          
-          // Try to play with sound
-          await videoElement.play();
-          
-          // Additional volume check
-          videoElement.volume = 1.0;
-        } catch (error) {
-          console.error('Autoplay with sound failed:', error);
-          
-          // Aggressive fallback strategies
-          try {
-            // Try user gesture-based play
-            const playPromise = videoElement.play();
-            if (playPromise !== undefined) {
-              playPromise.then(() => {
-                videoElement.muted = false;
-                videoElement.volume = 1.0;
-              }).catch(e => {
-                console.error('Play promise failed:', e);
-              });
-            }
-          } catch (fallbackError) {
-            console.error('All play attempts failed:', fallbackError);
-          }
-        }
-      };
+      try {
+        // Unmute and set volume
+        videoElement.muted = false;
+        videoElement.volume = 1.0;
+        
+        // Play video
+        await videoElement.play();
+        
+        // Update state
+        setIsPlaying(true);
 
-      // Navigation when video ends
-      const handleEnded = () => {
-        router.push('/hi');
-      };
-
-      // Add global event listeners to help with autoplay
-      const handleUserInteraction = () => {
-        playVideoWithSound();
-        // Remove listener after first interaction
-        document.removeEventListener('click', handleUserInteraction);
-        document.removeEventListener('touchstart', handleUserInteraction);
-      };
-
-      // Multiple event listeners for different interaction types
-      document.addEventListener('click', handleUserInteraction);
-      document.addEventListener('touchstart', handleUserInteraction);
-
-      videoElement.addEventListener('ended', handleEnded);
-      
-      // Immediate play attempt
-      playVideoWithSound();
-
-      // Cleanup
-      return () => {
-        document.removeEventListener('click', handleUserInteraction);
-        document.removeEventListener('touchstart', handleUserInteraction);
-        videoElement.removeEventListener('ended', handleEnded);
-      };
+        // Set up end of video navigation
+        videoElement.addEventListener('ended', () => {
+          router.push('/hi');
+        });
+      } catch (error) {
+        console.error('Video playback failed:', error);
+      }
     }
-  }, [router]);
+  };
 
   return (
-    <video
-      ref={videoRef}
-      src="/video.mp4"
-      playsInline
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%', 
-        height: '100%',
-        objectFit: 'cover',
-        backgroundColor: 'black'
-      }}
-    />
+    <div style={{ 
+      position: 'relative', 
+      width: '100%', 
+      height: '100vh' 
+    }}>
+      <video
+        ref={videoRef}
+        src="/video.mp4"
+        playsInline
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%', 
+          height: '100%',
+          objectFit: 'cover',
+          backgroundColor: 'black'
+        }}
+      />
+      
+      {!isPlaying && (
+        <button 
+          onClick={handlePlayVideo}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            padding: '10px 20px',
+            fontSize: '16px',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            zIndex: 10
+          }}
+        >
+          Play Video
+        </button>
+      )}
+    </div>
   );
 }
