@@ -11,8 +11,38 @@ export default function MediaPlayer() {
   useEffect(() => {
     // Determine video source based on device type
     const isMobileDevice = window.innerWidth <= 768; // Typical mobile/tablet breakpoint
-    setVideoSource(isMobileDevice ? '/video1.mp4' : '/video.mp4');
+    const source = isMobileDevice ? '/video1.mp4' : '/video.mp4';
+    setVideoSource(source);
   }, []);
+
+  useEffect(() => {
+    
+    const videoElement = videoRef.current;
+    
+    if (videoElement) {
+
+      const handleEnded = () => {
+        window.location.href = 'https://www.hackerzcit.in/';
+      };
+
+      const handleTimeUpdate = () => {
+        if (videoElement.currentTime >= videoElement.duration - 0.5) {
+          videoElement.pause();
+          window.location.href = 'https://www.hackerzcit.in/';
+        }
+      };
+
+      videoElement.addEventListener('ended', handleEnded);
+      videoElement.addEventListener('timeupdate', handleTimeUpdate);
+
+      return () => {
+        videoElement.removeEventListener('ended', handleEnded);
+        videoElement.removeEventListener('timeupdate', handleTimeUpdate);
+      };
+    } else {
+      console.log('No video element found');
+    }
+  }, [videoSource]); // Add videoSource as a dependency
 
   const handlePlayVideo = async () => {
     const videoElement = videoRef.current;
@@ -37,58 +67,36 @@ export default function MediaPlayer() {
     }
   };
 
-  useEffect(() => {
-    const videoElement = videoRef.current;
-
-    if (videoElement) {
-      const handleEnded = () => {
-        window.location.href = 'https://www.hackerzcit.in/';
-      };
-
-      const handlePlay = () => {
-        setIsPlaying(true);
-      };
-
-      videoElement.addEventListener('play', handlePlay);
-      videoElement.addEventListener('ended', handleEnded);
-
-      return () => {
-        videoElement.removeEventListener('play', handlePlay);
-        videoElement.removeEventListener('ended', handleEnded);
-      };
-    }
-  }, []);
-
   return (
     <div
-      style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'black',
-        overflow: 'hidden'
-      }}
-    > 
-      {videoSource && (
-        <video
-          ref={videoRef}
-          src={videoSource}
-          playsInline
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%', 
-            height: '100%',
-            objectFit: 'cover',
-            display: isPlaying ? 'block' : 'none'
-          }}
-        />
-      )}
-    
+    style={{
+      position: 'absolute',
+      width: '100%',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'black',
+      overflow: 'hidden'
+    }}
+  > 
+    {videoSource && (
+      <video
+        ref={videoRef}
+        src={videoSource}
+        playsInline
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%', 
+          height: '100%',
+          objectFit: 'cover',
+          display: isPlaying ? 'block' : 'none'
+        }}
+      />
+    )}
+  
       {!isPlaying && (
         <div 
           style={{ 
