@@ -11,7 +11,7 @@ export default function MediaPlayer() {
   useEffect(() => {
     // Determine video source based on device type
     const isMobileDevice = window.innerWidth <= 768; // Typical mobile/tablet breakpoint
-    const source = isMobileDevice ? '/video1.mp4' : '/video.mp4';
+    const source = isMobileDevice ? '/video1.mp4' : '/video1.mp4';
     setVideoSource(source);
   }, []);
 
