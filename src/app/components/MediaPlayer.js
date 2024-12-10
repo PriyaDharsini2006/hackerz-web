@@ -83,14 +83,14 @@ export default function MediaPlayer() {
           videoElement.muted = false;
           await videoElement.play();
         } catch (error) {
-          console.error('Autoplay with sound failed:', error);
+          console.log('Autoplay with sound failed:', error);
           
           // Fallback: try muted autoplay
           try {
             videoElement.muted = true;
             await videoElement.play();
           } catch (mutedError) {
-            console.error('Muted autoplay failed:', mutedError);
+            console.log('Muted autoplay failed:', mutedError);
           }
         }
       };
