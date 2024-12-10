@@ -1,141 +1,3 @@
-
-// 'use client';
-
-// import React, { useRef, useState, useEffect } from 'react';
-// import { useRouter } from 'next/navigation';
-
-// export default function MediaPlayer() {
-//   const videoRef = useRef(null);
-//   const router = useRouter();
-//   const [isPlaying, setIsPlaying] = useState(false);
-
-//   const handlePlayVideo = async () => {
-//     const videoElement = videoRef.current;
-    
-//     if (videoElement) {
-//       try {
-//         // Unmute explicitly
-//         videoElement.muted = false;
-        
-//         // Try to play with sound
-//         await videoElement.play();
-        
-//         // Set volume and update playing state
-//         videoElement.volume = 1.0;
-//         setIsPlaying(true);
-//       } catch (error) {
-//         console.log('Autoplay with sound failed:', error);
-        
-//         // Fallback: try muted autoplay
-//         try {
-//           videoElement.muted = true;
-//           await videoElement.play();
-//           setIsPlaying(true);
-//         } catch (mutedError) {
-//           console.error('Muted autoplay failed:', mutedError);
-//         }
-//       }
-//     }
-//   };
-
-//   useEffect(() => {
-//     const videoElement = videoRef.current;
-
-//     if (videoElement) {
-//       // Navigation when video ends
-//       const handleEnded = () => {
-//         // Redirect to the specified URL
-//         window.location.href = 'https://www.hackerzcit.in/';
-//       };
-
-//       // Listen for play event to update state
-//       const handlePlay = () => {
-//         setIsPlaying(true);
-//       };
-
-//       videoElement.addEventListener('play', handlePlay);
-//       videoElement.addEventListener('ended', handleEnded);
-
-//       // Cleanup
-//       return () => {
-//         videoElement.removeEventListener('play', handlePlay);
-//         videoElement.removeEventListener('ended', handleEnded);
-//       };
-//     }
-//   }, []);
-
-//   return (
-//     // <div style={{ 
-//     //   position: 'relative', 
-//     //   width: '100%', 
-//     //   height: '100vh' 
-//     // }}>
-//     <div
-//     style={{
-//       position: 'absolute',
-//       width: '100%',
-//       height: '100vh',
-//       backgroundImage: !isPlaying ? 'url(/hack2.jpg)' : 'none', 
-//       backgroundSize: 'cover',
-//       backgroundPosition: 'center',
-//       backgroundRepeat: 'no-repeat',
-//       backgroundColor: 'black'
-//     }}> 
-
-//       <video
-//         ref={videoRef}
-//         src="/video.mp4"
-//         playsInline
-//         style={{
-//           position: 'fixed',
-//           top: 0,
-//           left: 0,
-//           width: '100%', 
-//           height: '100%',
-//           objectFit: 'cover',
-//           // backgroundColor: 'black',
-//           display: isPlaying ? 'block' : 'none'
-//         }}
-//       />
-    
-      
-//       {!isPlaying && (
-//         <button 
-//           onClick={handlePlayVideo}
-//           style={{
-//             position:'absolute',
-//             top:'50%',
-//             left:"50%",
-//             transform:"translate(-50%,-50%)",
-//             padding: '15px 40px',
-//             fontSize: '20px',
-//             fontWeight: 'bold',
-//             color: '#fff',
-//             backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-//             border: '2px solid #00d4ff',
-//             borderRadius: '30px', 
-//             cursor: 'pointer',
-//             boxShadow: '0 0 15px rgba(0, 212, 255, 0.6)',
-//             transition: 'transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease',
-//             zIndex:10
-//           }}
-//           onMouseOver={(e) => {
-//             e.target.style.backgroundColor = 'rgba(0, 212, 255, 0.9)'; 
-//             e.target.style.boxShadow = '0 0 25px rgba(0, 212, 255, 1)'; 
-//             e.target.style.transform = 'scale(1.1)'; 
-//           }}
-//           onMouseOut={(e) => {
-//             e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-//             e.target.style.boxShadow = '0 0 15px rgba(0, 212, 255, 0.6)';
-//             e.target.style.transform = 'scale(1)'; 
-//           }}
-//         >
-//           Launch
-//         </button>
-//       )}
-//     </div>
-//   );
-// }
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
@@ -143,25 +5,20 @@ import React, { useRef, useState, useEffect } from 'react';
 export default function MediaPlayer() {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handlePlayVideo = async () => {
     const videoElement = videoRef.current;
     
     if (videoElement) {
       try {
-        // Unmute explicitly
         videoElement.muted = false;
-        
-        // Try to play with sound
         await videoElement.play();
-        
-        // Set volume and update playing state
         videoElement.volume = 1.0;
         setIsPlaying(true);
       } catch (error) {
         console.log('Autoplay with sound failed:', error);
         
-        // Fallback: try muted autoplay
         try {
           videoElement.muted = true;
           await videoElement.play();
@@ -177,13 +34,10 @@ export default function MediaPlayer() {
     const videoElement = videoRef.current;
 
     if (videoElement) {
-      // Navigation when video ends
       const handleEnded = () => {
-        // Redirect to the specified URL
         window.location.href = 'https://www.hackerzcit.in/';
       };
 
-      // Listen for play event to update state
       const handlePlay = () => {
         setIsPlaying(true);
       };
@@ -191,7 +45,6 @@ export default function MediaPlayer() {
       videoElement.addEventListener('play', handlePlay);
       videoElement.addEventListener('ended', handleEnded);
 
-      // Cleanup
       return () => {
         videoElement.removeEventListener('play', handlePlay);
         videoElement.removeEventListener('ended', handleEnded);
@@ -228,36 +81,140 @@ export default function MediaPlayer() {
       />
     
       {!isPlaying && (
-        <button 
-          onClick={handlePlayVideo}
-          style={{
-            position: 'relative',
-            padding: '15px 40px',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            color: '#fff',
-            background: '#00d4ff',
-            border: 'none',
-            borderRadius: '50px', 
-            cursor: 'pointer',
-            boxShadow: '0 10px 20px rgba(0, 212, 255, 0.4)',
-            transition: 'all 0.3s ease',
-            zIndex: 10,
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            outline: 'none'
+        <div 
+          style={{ 
+            position: 'relative', 
+            perspective: '1000px',
+            width: 'fit-content',
+            height: 'fit-content'
           }}
-          onMouseOver={(e) => {
-            e.target.style.transform = 'scale(1.05) translateY(-5px)'; 
-            e.target.style.boxShadow = '0 15px 25px rgba(0, 212, 255, 0.6)'; 
-          }}
-          onMouseOut={(e) => {
-            e.target.style.transform = 'scale(1) translateY(0)';
-            e.target.style.boxShadow = '0 10px 20px rgba(0, 212, 255, 0.4)';
-          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
-          Launch
-        </button>
+          <div 
+            style={{
+              position: 'relative',
+              perspective: '500px',
+              transformStyle: 'preserve-3d',
+              width: '100%',
+              height: '100%'
+            }}
+          >
+            <button 
+              onClick={handlePlayVideo}
+              style={{
+                position: 'relative',
+                padding: '15px 40px',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                color: '# ffff',
+                background: 'rgba(0,0,0,0.8)',
+                border: '2px solid #00ffff',
+                borderRadius: '5px', 
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                zIndex: 10,
+                textTransform: 'uppercase',
+                letterSpacing: '2px',
+                outline: 'none',
+                overflow: 'hidden',
+                boxShadow: isHovered 
+                  ? '0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff'
+                  : 'none',
+                transform: isHovered 
+                  ? 'perspective(500px) rotateX(10deg) rotateY(15deg) scale(1.05)' 
+                  : 'perspective(500px) rotateX(0) rotateY(0) scale(1)',
+              }}
+            >
+              {/* Multiple Glitch Layers */}
+              {[...Array(3)].map((_, index) => (
+                <span 
+                  key={index}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: `rgba(${index * 50}, 212, 255, 0.${3 - index})`,
+                    transform: isHovered 
+                      ? `translate(${(index - 1) * 3}px, ${(index - 1) * 3}px) skew(${(index - 1) * 2}deg)`
+                      : 'translate(0, 0) skew(0deg)',
+                    transition: 'transform 0.1s',
+                    zIndex: -index - 1
+                  }}
+                />
+              ))}
+              
+              {/* Digital Noise Effect */}
+              {isHovered && (
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
+                    mixBlendMode: 'overlay',
+                    opacity: 0.3,
+                    pointerEvents: 'none'
+                  }}
+                />
+              )}
+
+              {/* Cyber Scan Lines */}
+              {isHovered && (
+                <>
+                  <span 
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '2px',
+                      background: 'linear-gradient(to right, transparent, #00ffff, transparent)',
+                      animation: 'scanLine 2s linear infinite',
+                      zIndex: 2
+                    }}
+                  />
+                  <span 
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      right: '-100%',
+                      width: '100%',
+                      height: '2px',
+                      background: 'linear-gradient(to left, transparent, #ff00ff, transparent)',
+                      animation: 'scanLineReverse 2s linear infinite',
+                      zIndex: 2
+                    }}
+                  />
+                </>
+              )}
+              
+              Launch
+            </button>
+          </div>
+          
+          {/* Global styles for animations */}
+          <style jsx global>{`
+            @keyframes scanLine {
+              0% { left: -100%; }
+              100% { left: 100%; }
+            }
+            @keyframes scanLineReverse {
+              0% { right: -100%; }
+              100% { right: 100%; }
+            }
+            @keyframes glitchAnimation {
+              0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+              5% { clip-path: polygon(0 10%, 100% 0, 100% 100%, 0 90%); }
+              10% { clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%); }
+              15% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+            }
+          `}</style>
+        </div>
       )}
     </div>
   );
