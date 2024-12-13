@@ -75,12 +75,24 @@ export default function MediaPlayer() {
       position: 'absolute',
       width: '100%',
       height: '100vh',
-      backgroundImage: !isPlaying ? 'url(/hack2.jpg)' : 'none', 
+      backgroundImage: !isPlaying ? 'url(/1010066.jpg)' : 'none', 
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       backgroundColor: 'black'
     }}> 
+    <img
+        src="/image.png" 
+        alt="Logo"
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          width: '100px', 
+          height: 'auto',
+          zIndex: 15,
+        }}
+      />
 
       <video
         ref={videoRef}
