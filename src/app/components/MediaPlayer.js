@@ -75,7 +75,7 @@ export default function MediaPlayer() {
       position: 'absolute',
       width: '100%',
       height: '100vh',
-      backgroundImage: !isPlaying ? 'url(/1010066.jpg)' : 'none', 
+      backgroundImage: !isPlaying ? 'url(/compressed.jpg)' : 'none', 
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -115,10 +115,10 @@ export default function MediaPlayer() {
         <button 
           onClick={handlePlayVideo}
           style={{
-            position:'absolute',
+            position:'fixed',
             top:'50%',
             left:"50%",
-            transform:"translate(-50%,-50%)",
+            // transform:"translate(-50%,-50%)",
             padding: '15px 40px',
             fontSize: '20px',
             fontWeight: 'bold',
@@ -128,8 +128,8 @@ export default function MediaPlayer() {
             borderRadius: '30px', 
             cursor: 'pointer',
             boxShadow: '0 0 15px rgba(0, 212, 255, 0.6)',
-            transition: 'transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease',
-            zIndex:10
+            transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+  
           }}
           onMouseOver={(e) => {
             e.target.style.backgroundColor = 'rgba(0, 212, 255, 0.9)'; 
