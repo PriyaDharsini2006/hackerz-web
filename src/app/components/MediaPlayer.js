@@ -96,7 +96,7 @@ export default function MediaPlayer() {
 
       <video
         ref={videoRef}
-        src="/video.mp4"
+        src="/video1.mp4"
         playsInline
         style={{
           position: 'fixed',
@@ -105,7 +105,6 @@ export default function MediaPlayer() {
           width: '100%', 
           height: '100%',
           objectFit: 'cover',
-          // backgroundColor: 'black',
           display: isPlaying ? 'block' : 'none'
         }}
       />
@@ -148,3 +147,4 @@ export default function MediaPlayer() {
     </div>
   );
 }
+
